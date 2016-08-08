@@ -8,6 +8,7 @@ function love.load()
 	inMemoryZone = {x=-100, y=-100, w=900, h=800}
 		
 	playerRect = {x=400, y=100, w=30, h=20, c={math.random(255), math.random(255), math.random(255)}}
+	playerPreviousRect = {x=400, y=100}
 	
 	terrain = {}
 	terrain[1] = {x=0, y=400, w=600, h=50, c={math.random(255), math.random(255), math.random(255)}}
@@ -45,31 +46,42 @@ function love.update(dt)
 	
 	-- playerMove()
 	
+	playerPreviousRect = {x=playerRect.x, y=playerRect.y}
 	playerRect.x, playerRect.y = playerRect.x + playerXAccel, playerRect.y + playerYAccel
 	
-	-- for k,t in ipairs(terrain) do
-	-- 	if rectsOverlap(playerRect, t) then
-	-- 		hitTerrain(k)
-	-- 	end
-	-- end
+	for k,t in ipairs(terrain) do
+		if rectsOverlap(playerRect, t) then
+			hitTerrain(t)
+		
+			-- if rectsOverlapHorizontal(playerRect, t) then
+			-- 	playerRect.x = playerPreviousRect.x
+			-- 	playerXAccel = 0
+			-- 	-- print("umm")
+			-- end
+			-- if rectsOverlapVertical(playerRect, t) then
+			-- 	playerRect.y = playerPreviousRect.y
+			-- 	playerYAccel = 0
+			-- end
+		end
+	end
 	
 	updatePlayerBullets(dt)
 	
-	playerYAccel = playerYAccel / 2
-	playerXAccel = playerXAccel / 2
+	playerYAccel = 0--math.round(playerYAccel / 2)
+	playerXAccel = 0--math.round(playerXAccel / 2)
 	
 	-- actorHitsGroundOrCeiling(playerRect)
 	-- actorHitsWalls(playerRect)
 end
 
 function love.draw()
-	love.graphics.setColor(playerRect.c[1], playerRect.c[2], playerRect.c[3])
-	love.graphics.rectangle("fill", playerRect.x, playerRect.y, playerRect.w, playerRect.h)
-	
 	for k,t in ipairs(terrain) do
 		love.graphics.setColor(t.c[1], t.c[2], t.c[3])
 		love.graphics.rectangle("fill", t.x, t.y, t.w, t.h)
 	end
+	
+	love.graphics.setColor(playerRect.c[1], playerRect.c[2], playerRect.c[3])
+	love.graphics.rectangle("fill", playerRect.x, playerRect.y, playerRect.w, playerRect.h)
 	
 	for k,t in ipairs(bullets) do
 		love.graphics.setColor(t.c[1], t.c[2], t.c[3])
@@ -125,8 +137,38 @@ function updatePlayerBullets(dt)
 	end
 end
 
-function hitTerrain(k)
-	terrain[k].c = {math.random(255), math.random(255), math.random(255)}
+function hitTerrain(t)
+	-- t.c = {math.random(255), math.random(255), math.random(255)}
+	local terrain = t --TODO duh
+	-- if t.x > playerRect.x then
+	-- 	playerRect.x = t.x - playerRect.w
+	-- elseif t.x <= playerRect.x then
+	-- 	playerRect.x = t.x + t.w
+	-- elseif t.y > playerRect.y then
+	-- 	playerRect.y = t.y - playerRect.h
+	-- elseif t.y <= playerRect.y then
+	-- 	playerRect.y = t.y + t.h
+	-- end
+
+	-- playerRect.x, playerRect.y = playerPreviousRect.x, playerPreviousRect.y
+	-- playerXAccel = 0
+	-- playerYAccel = 0
+	
+	if terrain.x >= playerRect.x and terrain.x <= playerRect.x + playerRect.w then
+		playerRect.x = terrain.x - playerRect.w - 1
+		
+	elseif terrain.x + terrain.w >= playerRect.x and terrain.x + terrain.w <= playerRect.x + playerRect.w then
+		playerRect.x = terrain.x + terrain.w + 1
+		
+	elseif terrain.y >= playerRect.y and terrain.y <= playerRect.y + playerRect.h then
+		playerRect.y = terrain.y - playerRect.h - 1
+		
+	elseif terrain.y + terrain.h >= playerRect.y and terrain.y + terrain.h <= playerRect.y + playerRect.h then
+		playerRect.y = terrain.y + terrain.h + 1
+		
+		--hate this. why so hard. googling now
+		
+	end
 end
 
 function rectsOverlap(r1, r2)
