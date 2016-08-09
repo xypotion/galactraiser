@@ -51,7 +51,7 @@ function love.update(dt)
 	
 	for k,t in ipairs(terrain) do
 		if rectsOverlap(playerRect, t) then
-			hitTerrain(t)
+			correctForTerrainCollision(t)
 		
 			-- if rectsOverlapHorizontal(playerRect, t) then
 			-- 	playerRect.x = playerPreviousRect.x
@@ -137,7 +137,7 @@ function updatePlayerBullets(dt)
 	end
 end
 
-function hitTerrain(t)
+function correctForTerrainCollision(t)
 	-- t.c = {math.random(255), math.random(255), math.random(255)}
 	local terrain = t --TODO duh
 	-- if t.x > playerRect.x then
@@ -154,22 +154,36 @@ function hitTerrain(t)
 	-- playerXAccel = 0
 	-- playerYAccel = 0
 	
-	if terrain.y >= playerRect.y and terrain.y <= playerRect.y + playerRect.h then
-			playerRect.y = terrain.y - playerRect.h - 1
-		
-		elseif terrain.y + terrain.h >= playerRect.y and terrain.y + terrain.h <= playerRect.y + playerRect.h then
-			playerRect.y = terrain.y + terrain.h + 1
-	elseif terrain.x >= playerRect.x and terrain.x <= playerRect.x + playerRect.w then
+	--this block almost works...
+	if terrain.x >= playerRect.x and terrain.x <= playerRect.x + playerRect.w then
 		playerRect.x = terrain.x - playerRect.w - 1
-		
 	elseif terrain.x + terrain.w >= playerRect.x and terrain.x + terrain.w <= playerRect.x + playerRect.w then
 		playerRect.x = terrain.x + terrain.w + 1
-		
-	-- else
-		
-		--hate this. why so hard. googling now
-		
+	elseif terrain.y >= playerRect.y and terrain.y <= playerRect.y + playerRect.h then
+		playerRect.y = terrain.y - playerRect.h - 1
+	elseif terrain.y + terrain.h >= playerRect.y and terrain.y + terrain.h <= playerRect.y + playerRect.h then
+		playerRect.y = terrain.y + terrain.h + 1
 	end
+	
+	--hate this. why so hard. googling now.
+		
+	--nice try, but the orientation of the wall is more important than the player's velocity. this won't solve the above block's problem.
+	-- if playerXAccel > 0 then --moving right
+	-- 	if playerYAccel > 0 then --moving down
+	-- 	elseif playerYAccel < 0 then --moving up
+	-- 	else
+	-- 	end
+	-- elseif playerXAccel < 0 then --moving left
+	-- 	if playerYAccel > 0 then --moving down
+	-- 	elseif playerYAccel < 0 then --moving up
+	-- 	else
+	-- 	end
+	-- else --not moving right or left
+	-- 	if playerYAccel > 0 then --moving down
+	-- 	elseif playerYAccel < 0 then --moving up
+	-- 	end
+	-- end
+		
 end
 
 function rectsOverlap(r1, r2)
