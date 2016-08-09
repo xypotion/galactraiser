@@ -67,8 +67,8 @@ function love.update(dt)
 	
 	updatePlayerBullets(dt)
 	
-	playerYAccel = 0--math.round(playerYAccel / 2)
-	playerXAccel = 0--math.round(playerXAccel / 2)
+	playerYAccel = playerYAccel / 2--0--math.round()
+	playerXAccel = playerXAccel / 2--0--math.round()
 	
 	-- actorHitsGroundOrCeiling(playerRect)
 	-- actorHitsWalls(playerRect)
@@ -154,17 +154,18 @@ function hitTerrain(t)
 	-- playerXAccel = 0
 	-- playerYAccel = 0
 	
-	if terrain.x >= playerRect.x and terrain.x <= playerRect.x + playerRect.w then
+	if terrain.y >= playerRect.y and terrain.y <= playerRect.y + playerRect.h then
+			playerRect.y = terrain.y - playerRect.h - 1
+		
+		elseif terrain.y + terrain.h >= playerRect.y and terrain.y + terrain.h <= playerRect.y + playerRect.h then
+			playerRect.y = terrain.y + terrain.h + 1
+	elseif terrain.x >= playerRect.x and terrain.x <= playerRect.x + playerRect.w then
 		playerRect.x = terrain.x - playerRect.w - 1
 		
 	elseif terrain.x + terrain.w >= playerRect.x and terrain.x + terrain.w <= playerRect.x + playerRect.w then
 		playerRect.x = terrain.x + terrain.w + 1
 		
-	elseif terrain.y >= playerRect.y and terrain.y <= playerRect.y + playerRect.h then
-		playerRect.y = terrain.y - playerRect.h - 1
-		
-	elseif terrain.y + terrain.h >= playerRect.y and terrain.y + terrain.h <= playerRect.y + playerRect.h then
-		playerRect.y = terrain.y + terrain.h + 1
+	-- else
 		
 		--hate this. why so hard. googling now
 		
