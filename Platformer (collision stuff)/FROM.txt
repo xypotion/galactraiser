@@ -1,0 +1,1 @@
+source article: http://www.hobbygamedev.com/int/platformer-game-source-in-processing/#collision
